@@ -6,7 +6,7 @@ public class NoiseGenerator extends SoundGenerator {
 		byte [] output = new byte [samples];
 		Random rand = new Random();
 		for(int i = 0; i < output.length; i++){
-			output[i] = (byte) (rand.nextInt(254) - 127);
+			output[i] = (byte) (rand.nextInt(this.strength * 2) - this.strength);
 		}
 		return output;
 	}

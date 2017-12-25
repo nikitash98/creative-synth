@@ -14,15 +14,15 @@ public class SawGenerator extends SoundGenerator {
 		int samples = (int)((length * SAMPLING_RATE));
 		byte [] output = new byte [samples];
 		double period = (double)SAMPLING_RATE/frequency;
-		double slope = (127 * 2)/period;
+		double slope = (this.strength)/period;
 		int mover = 0;
 
 		for(int i = 0; i < output.length; i++){
-			if(slope * mover == 127f){
+			if(slope * mover >= this.strength){
 				mover = 0;
 			} 
 			
-			output[i] = (byte)(slope * mover + -127f);
+			output[i] = (byte)(slope * mover + -this.strength);
 			mover++;
 		}
 		return output;

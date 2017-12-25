@@ -23,7 +23,7 @@ public class SquareGenerator extends SoundGenerator {
 				checker = 0;
 			} 
 			checker++;
-			output[i] = (byte)(127f * flipper);
+			output[i] = (byte)(this.strength * flipper);
 		}
 		return output;
 	}

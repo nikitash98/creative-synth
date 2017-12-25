@@ -25,11 +25,20 @@ public abstract class SoundGenerator {
 		strength.setMajorTickSpacing(30);
 		strength.setPaintTicks(true);
 		setFrequency(frequency.getValue());
+		setStrength(strength.getValue());
 		frequency.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				setFrequency(frequency.getValue());
 			}
+		});
+		strength.addChangeListener(new ChangeListener(){
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				setStrength(strength.getValue());
+			}
+			
 		});
 		ret.add(label);
 		ret.add(freqlab);
@@ -41,5 +50,8 @@ public abstract class SoundGenerator {
 	public abstract byte[] createBuffer(int j);
 	public void setFrequency(int j){
 		this.frequency = j;
+	}
+	public void setStrength(int j){
+		this.strength = j;
 	}
 }
