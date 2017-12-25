@@ -5,39 +5,55 @@ import java.awt.FlowLayout;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 import java.awt.event.ActionEvent;
 public class SynthArt {
 	protected static final int SAMPLING_RATE = 44100; //Sampling rate of audio
 
 	public static void main(String[] args) throws LineUnavailableException{
+		Vector<SoundGenerator> soundgens = new Vector<SoundGenerator>();
+		String[] options = {"Sin", "Saw", "Square", "Noise"};
+		JComboBox soundlist = new JComboBox(options);
 		
 		final AudioFormat af = new AudioFormat(SAMPLING_RATE, 8, 1, true, true); // Get audio format
 		SourceDataLine line = AudioSystem.getSourceDataLine(af);
+		
 		JFrame frame = new JFrame("The Synth!");
-		JSlider frequency = new JSlider(JSlider.HORIZONTAL, 0, 1000, 500);
-		JPanel singen = new SinGenerator();
-		JRadioButton sinButton = new JRadioButton("Sin");
-	    sinButton.setSelected(true);
-	    JRadioButton sawButton = new JRadioButton("Saw");
+		JSlider length = new JSlider(JSlider.HORIZONTAL, 0, 2, 1);
 
-	    JRadioButton squareButton = new JRadioButton("Square");
-
-	    JRadioButton noiseButton = new JRadioButton("Noise");
-	    
-	    ButtonGroup group = new ButtonGroup();
-	    group.add(sinButton);
-	    group.add(sawButton);
-	    group.add(noiseButton);
-	    group.add(squareButton);
+	    JButton addnew = new JButton("Add");
+	    addnew.addActionListener(new ActionListener(){
+	    	public void actionPerformed(ActionEvent e){
+	    		int selectedInd = soundlist.getSelectedIndex();
+	    		if(selectedInd == 0){
+		    		soundgens.add(new SinGenerator());
+	    		} else if(selectedInd == 1){
+	    			soundgens.add(new SawGenerator());
+	    		} else if(selectedInd == 2){
+	    			soundgens.add(new SquareGenerator());
+	    		} else if(selectedInd == 3){
+	    			soundgens.add(new NoiseGenerator());
+	    		}
+	    		JPanel singen = soundgens.lastElement().drawPanel();
+	    		frame.add(singen);
+	    		frame.revalidate();
+	    		frame.repaint();
+	    	}
+	    });
 	    
 	    
 		JButton Play = new JButton("PLAY");
@@ -51,9 +67,8 @@ public class SynthArt {
 					e1.printStackTrace();
 				}
 				line.start();
-				System.out.println(frequency.getValue());
-				byte[] entry = BufferSource.createSinWaveBuffer(frequency.getValue(), 1);
-				entry = BufferSource.addNoise(entry, 2);
+				System.out.println(length.getValue());	
+				byte[] entry = soundgens.lastElement().createBuffer(1);
 				line.write(entry, 0, entry.length);
 				line.drain();
 				line.close();
@@ -61,17 +76,13 @@ public class SynthArt {
 			}
 		});
 		
-		frequency.setMajorTickSpacing(100);
-		frequency.setPaintTicks(true);
+		length.setMajorTickSpacing(100);
+		length.setPaintTicks(true);
 		frame.getContentPane().setLayout(new FlowLayout());
-		
-		 frame.getContentPane().add(sinButton);
-		 frame.getContentPane().add(sawButton);
-		 frame.getContentPane().add(noiseButton);
-		 frame.getContentPane().add(squareButton);
-		frame.add(frequency);
+		frame.add(addnew);
+		frame.add(soundlist);
+		frame.add(length);
 		frame.add(Play);
-		frame.add(singen);
 		frame.pack();
 		frame.setSize(400,400);
 		frame.setVisible(true);
