@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
-
+import java.util.Iterator;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -38,6 +38,7 @@ public class SynthArt {
 	    JButton addnew = new JButton("Add");
 	    addnew.addActionListener(new ActionListener(){
 	    	public void actionPerformed(ActionEvent e){
+	    		
 	    		int selectedInd = soundlist.getSelectedIndex();
 	    		if(selectedInd == 0){
 		    		soundgens.add(new SinGenerator());
@@ -48,8 +49,8 @@ public class SynthArt {
 	    		} else if(selectedInd == 3){
 	    			soundgens.add(new NoiseGenerator());
 	    		}
-	    		JPanel singen = soundgens.lastElement().drawPanel();
-	    		frame.add(singen);
+	    		
+	    		soundgens.lastElement().drawPanel(frame);
 	    		frame.revalidate();
 	    		frame.repaint();
 	    	}
@@ -67,8 +68,19 @@ public class SynthArt {
 					e1.printStackTrace();
 				}
 				line.start();
-				System.out.println(length.getValue());	
-				byte[] entry = soundgens.lastElement().createBuffer(1);
+				byte[] entry = new byte[SAMPLING_RATE * length.getValue()];
+				int index = 0;
+				//Deletion Script//
+				for (int x = soundgens.size()-1; x >= 0; x--){
+					if(soundgens.elementAt(x).deleted == 1){
+						soundgens.remove(x);
+					}
+				}
+				Iterator<SoundGenerator> it = soundgens.iterator();
+
+				while(it.hasNext()){
+					entry = it.next().createBuffer(entry);
+				}
 				line.write(entry, 0, entry.length);
 				line.drain();
 				line.close();

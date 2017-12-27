@@ -7,7 +7,9 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 
 public class SawGenerator extends SoundGenerator {
-
+	SawGenerator(){
+		type = "Saw";
+	}
 	//Creates a byte array of sin wave sound
 	//Creates an array of saw wave sound
 	public byte [] createBuffer( int length){
@@ -26,5 +28,21 @@ public class SawGenerator extends SoundGenerator {
 			mover++;
 		}
 		return output;
+	}
+	@Override
+	public byte[] createBuffer(byte[] entry) {
+		double period = (double)SAMPLING_RATE/frequency;
+		double slope = (this.strength)/period;
+		int mover = 0;
+
+		for(int i = 0; i < entry.length; i++){
+			if(slope * mover >= this.strength){
+				mover = 0;
+			} 
+			
+			entry[i] = (byte)(entry[i] + slope * mover + -this.strength);
+			mover++;
+		}
+		return entry;		
 	}
 }

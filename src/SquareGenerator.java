@@ -8,7 +8,9 @@ import javax.swing.JSlider;
 
 public class SquareGenerator extends SoundGenerator {
 
-
+	SquareGenerator(){
+		type = "Square";
+	}
 	//Creates a byte array of square wave sound
 	public byte [] createBuffer(int length){
 		int samples = (int)((length * SAMPLING_RATE));
@@ -26,5 +28,21 @@ public class SquareGenerator extends SoundGenerator {
 			output[i] = (byte)(this.strength * flipper);
 		}
 		return output;
+	}
+	//Creates a byte array of square wave sound
+	public byte [] createBuffer(byte[] entry){
+		double period = (double)SAMPLING_RATE/frequency;
+		int flipper = 1;
+		int checker = 0;
+
+		for(int i = 0; i < entry.length; i++){
+			if(checker > period/2){
+				flipper *= -1;
+				checker = 0;
+			} 
+			checker++;
+			entry[i] = (byte)(entry[i] + this.strength * flipper);
+		}
+		return entry;
 	}
 }
