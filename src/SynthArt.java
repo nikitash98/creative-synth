@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -33,7 +34,9 @@ public class SynthArt {
 		SourceDataLine line = AudioSystem.getSourceDataLine(af);
 		
 		JFrame frame = new JFrame("The Synth!");
+		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.PAGE_AXIS));
 		JSlider length = new JSlider(JSlider.HORIZONTAL, 0, 2, 1);
+		DrawBuffer canvas = new DrawBuffer();
 
 	    JButton addnew = new JButton("Add");
 	    addnew.addActionListener(new ActionListener(){
@@ -69,7 +72,6 @@ public class SynthArt {
 				}
 				line.start();
 				byte[] entry = new byte[SAMPLING_RATE * length.getValue()];
-				int index = 0;
 				//Deletion Script//
 				for (int x = soundgens.size()-1; x >= 0; x--){
 					if(soundgens.elementAt(x).deleted == 1){
@@ -81,20 +83,24 @@ public class SynthArt {
 				while(it.hasNext()){
 					entry = it.next().createBuffer(entry);
 				}
+				canvas.setBuffer(entry);
+				frame.revalidate();
+				frame.repaint();
 				line.write(entry, 0, entry.length);
 				line.drain();
 				line.close();
 
 			}
 		});
-		
 		length.setMajorTickSpacing(100);
 		length.setPaintTicks(true);
-		frame.getContentPane().setLayout(new FlowLayout());
-		frame.add(addnew);
-		frame.add(soundlist);
-		frame.add(length);
-		frame.add(Play);
+		frame.getContentPane().add(addnew);
+		frame.getContentPane().add(soundlist);
+		frame.getContentPane().add(length);
+		frame.getContentPane().add(Play);
+		canvas.setPreferredSize(new Dimension(300, 300));
+		frame.getContentPane().add(canvas);
+
 		frame.pack();
 		frame.setSize(400,400);
 		frame.setVisible(true);
