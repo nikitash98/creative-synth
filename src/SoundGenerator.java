@@ -17,7 +17,7 @@ public abstract class SoundGenerator {
 	String type = "Base SoundGen";
 	int deleted = 0;
 	
-	public void drawPanel(JFrame frame){
+	public void drawPanel(JPanel frame){
 		JPanel ret = new JPanel();
 		ret.setLayout(new BoxLayout(ret, BoxLayout.PAGE_AXIS));
 		JLabel label = new JLabel(type + " Generator!");

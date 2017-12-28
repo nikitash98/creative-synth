@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -10,6 +11,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import java.util.Iterator;
 import javafx.beans.value.ChangeListener;
@@ -29,14 +31,22 @@ public class SynthArt {
 		Vector<SoundGenerator> soundgens = new Vector<SoundGenerator>();
 		String[] options = {"Sin", "Saw", "Square", "Noise"};
 		JComboBox soundlist = new JComboBox(options);
+		//Synth panel
+		JPanel thesynths = new JPanel();
+		thesynths.setBorder(BorderFactory.createLineBorder(Color.black));
+		thesynths.setLayout(new BoxLayout(thesynths, BoxLayout.PAGE_AXIS));
+		thesynths.setPreferredSize(new Dimension(300, 300));
+		JScrollPane scrollPane = new JScrollPane(thesynths);
+		//Original Panel
+		JPanel origPan = new JPanel();
 		
 		final AudioFormat af = new AudioFormat(SAMPLING_RATE, 8, 1, true, true); // Get audio format
 		SourceDataLine line = AudioSystem.getSourceDataLine(af);
-		
+		JPanel basicsyn = new JPanel();
 		JFrame frame = new JFrame("The Synth!");
-		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.PAGE_AXIS));
 		JSlider length = new JSlider(JSlider.HORIZONTAL, 0, 2, 1);
 		DrawBuffer canvas = new DrawBuffer();
+		canvas.setBorder(BorderFactory.createLineBorder(Color.black));
 
 	    JButton addnew = new JButton("Add");
 	    addnew.addActionListener(new ActionListener(){
@@ -53,7 +63,7 @@ public class SynthArt {
 	    			soundgens.add(new NoiseGenerator());
 	    		}
 	    		
-	    		soundgens.lastElement().drawPanel(frame);
+	    		soundgens.lastElement().drawPanel(thesynths);
 	    		frame.revalidate();
 	    		frame.repaint();
 	    	}
@@ -94,15 +104,24 @@ public class SynthArt {
 		});
 		length.setMajorTickSpacing(100);
 		length.setPaintTicks(true);
+		frame.getContentPane().add(scrollPane, BorderLayout.LINE_START);
+		canvas.setPreferredSize(new Dimension(800,800));
+		canvas.setBackground(Color.WHITE);
+		frame.getContentPane().add(canvas, BorderLayout.CENTER);
+		origPan.add(length);
+		origPan.add(Play);
+		origPan.add(addnew);
+		origPan.add(soundlist);
+		frame.getContentPane().add(origPan, BorderLayout.PAGE_END);
+		/**
+
 		frame.getContentPane().add(addnew);
 		frame.getContentPane().add(soundlist);
 		frame.getContentPane().add(length);
 		frame.getContentPane().add(Play);
-		canvas.setPreferredSize(new Dimension(300, 300));
 		frame.getContentPane().add(canvas);
-
+		*/
 		frame.pack();
-		frame.setSize(400,400);
 		frame.setVisible(true);
 	}
 
